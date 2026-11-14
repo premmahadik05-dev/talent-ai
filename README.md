@@ -1,299 +1,131 @@
-# TalentAI - Explainable AI Hiring Intelligence
-
-A comprehensive enterprise SaaS platform that leverages artificial intelligence to help recruiters and administrators intelligently source, parse, rank, and evaluate candidates against job postings using LLM-driven semantic matching and explainable scoring.
-
-## Quick Start
-
-### Prerequisites
-- Node.js 22.13.0+
-- pnpm 10.4.1+
-- MySQL/TiDB database
-
-### Installation
-
-```bash
-# Install dependencies
-pnpm install
-
-# Start development server
-pnpm run dev
-
-# Run tests
-pnpm test
-
-# Build for production
-pnpm build
-
-# Start production server
-pnpm start
-```
-
-The application will be available at `http://localhost:3000`
-
-## Features
-
-### 🔐 Authentication & Access Control
-- JWT-based authentication with Manus OAuth 2.0
-- Role-based access control (Admin and Recruiter roles)
-- Secure session management with encrypted cookies
-- Protected routes enforced per user role
-
-### 📊 Enterprise Dashboard
-- Real-time KPI cards showing Total Candidates, Total Jobs, AI Matches, Interviews, and Hiring Rate
-- Recent activity feed with system events
-- Quick action buttons for common tasks
-- Professional light theme with responsive design
-
-### 💼 Job Management
-- Create, edit, delete, and publish job postings
-- Full job description and requirements storage
-- Job status tracking (draft, published, closed)
-- Recruiter-specific job management interface
-
-### 📄 Resume Upload & AI Parsing
-- Support for PDF and DOCX file formats
-- Bulk upload capability with drag-and-drop interface
-- Upload progress indicators
-- AI-powered automatic extraction of:
-  - Technical and soft skills with proficiency levels
-  - Work experience and employment history
-  - Education and academic credentials
-  - Professional certifications
-  - Languages and achievements
-
-### 🤖 AI Ranking Engine
-- Semantic similarity scoring using LLM embeddings
-- Weighted scoring model with exact specifications:
-  - Skills: 40%
-  - Experience: 25%
-  - Projects: 15%
-  - Education: 10%
-  - Certifications: 5%
-  - Activity: 5%
-- Intelligent candidate-to-job matching
-
-### 💡 Explainable AI Recommendations
-- Detailed per-candidate match analysis
-- Matched and missing skills identification
-- AI-identified strengths and weaknesses
-- Skill gap analysis
-- AI-generated interview questions tailored to each candidate
-- Comprehensive hiring recommendations
-
-### 👥 Candidate Management
-- Comprehensive candidate profiles with extracted resume data
-- Career timeline visualization
-- Skills showcase with proficiency levels
-- Education and certification display
-- AI-generated candidate summaries
-- AI match scores displayed on profiles
-
-### 🔍 Advanced Search & Filtering
-- Multi-criteria filtering by skills, experience, education, score, location, and status
-- Real-time search functionality
-- Sortable and paginated candidate table
-- Filter combinations for precise candidate targeting
-
-### 📈 Analytics Dashboard
-- Interactive data visualizations including:
-  - Hiring funnel (Applied → Screened → Interviewed → Offered → Hired)
-  - Top skills distribution
-  - Candidate score distribution by AI match percentage
-  - Experience level distribution
-  - Monthly hiring trends
-- Key performance metrics:
-  - Conversion rate (Applied → Hired)
-  - Average time to hire
-  - Interview pass rate
-- Excel and PDF export capabilities
-
-## Project Structure
-
-```
-talent-ai/
-├── client/                    # React frontend
-│   ├── src/
-│   │   ├── pages/            # Page components
-│   │   ├── components/       # Reusable UI components
-│   │   ├── lib/              # tRPC client and utilities
-│   │   ├── contexts/         # React contexts
-│   │   ├── hooks/            # Custom React hooks
-│   │   └── index.css         # Global styles
-│   └── public/               # Static assets
-├── server/                    # Express backend
-│   ├── routers.ts            # tRPC procedure definitions
-│   ├── db.ts                 # Database queries
-│   ├── rankingEngine.ts      # AI ranking logic
-│   ├── interviewGenerator.ts # Interview question generation
-│   ├── storage.ts            # S3 file storage helpers
-│   └── _core/                # Framework core files
-├── drizzle/                   # Database schema and migrations
-│   ├── schema.ts             # Drizzle ORM schema
-│   └── migrations/           # SQL migration files
-├── shared/                    # Shared types and constants
-└── package.json              # Project dependencies
-```
-
-## Database Schema
-
-The platform uses a comprehensive relational database with 14 tables:
-
-**Core Tables:** users, jobs, candidates, resumes
-
-**Candidate Profile Tables:** skills, experience, education, projects, certifications, languages, achievements
-
-**AI & Analytics Tables:** rankings, analytics, activity
-
-See `PROJECT_DOCUMENTATION.md` for detailed schema information.
-
-## API Documentation
-
-The platform uses tRPC for type-safe API calls. Key procedure groups include:
-
-- `auth.*` - Authentication and session management
-- `dashboard.*` - KPI metrics and activity feeds
-- `jobs.*` - Job posting management
-- `candidates.*` - Candidate profile management
-- `rankings.*` - AI ranking and match analysis
-- `system.*` - System notifications
-
-All procedures are fully typed with TypeScript for end-to-end type safety.
-
-## Configuration
-
-### Environment Variables
-
-```bash
-# Database
-DATABASE_URL=mysql://user:password@host:port/database
-
-# Authentication
-JWT_SECRET=your-jwt-secret-key
-VITE_APP_ID=your-oauth-app-id
-OAUTH_SERVER_URL=https://api.manus.im
-VITE_OAUTH_PORTAL_URL=https://portal.manus.im
-
-# LLM Integration
-BUILT_IN_FORGE_API_URL=https://api.manus.im/forge
-BUILT_IN_FORGE_API_KEY=your-llm-api-key
-VITE_FRONTEND_FORGE_API_KEY=your-frontend-llm-key
-
-# Owner Information
-OWNER_NAME=Your Name
-OWNER_OPEN_ID=your-open-id
-```
-
-## Development
-
-### Adding New Features
-
-1. **Update Database Schema:** Modify `drizzle/schema.ts`
-2. **Generate Migration:** Run `pnpm drizzle-kit generate`
-3. **Apply Migration:** Use `webdev_execute_sql` to apply SQL
-4. **Add Database Queries:** Update `server/db.ts`
-5. **Create tRPC Procedures:** Add to `server/routers.ts`
-6. **Build Frontend:** Create components in `client/src/pages/` or `client/src/components/`
-7. **Write Tests:** Add vitest tests in `server/*.test.ts`
-
-### Testing
-
-```bash
-# Run all tests
-pnpm test
-
-# Run tests in watch mode
-pnpm test --watch
-
-# Run specific test file
-pnpm test server/auth.logout.test.ts
-```
-
-### Code Quality
-
-```bash
-# Type checking
-pnpm check
-
-# Format code
-pnpm format
-```
-
-## Deployment
-
-The platform is designed for serverless deployment on Cloud Run with the following specifications:
-
-- **Runtime:** Node.js
-- **Resources:** 1 vCPU, 512 MiB RAM
-- **Timeout:** 180 seconds
-- **Scaling:** Autoscale (min-instances=0)
-
-### Deployment Steps
-
-1. Create a checkpoint: `webdev_save_checkpoint`
-2. Click the Publish button in the Management UI
-3. Configure custom domain if needed
-4. Set up environment variables in the Settings panel
-
-## Performance
-
-The platform is optimized for performance with:
-
-- React Query for efficient data fetching and caching
-- Lazy-loaded components and code splitting
-- Optimized database queries with proper indexing
-- S3-based file storage for scalability
-- Recharts for efficient chart rendering
-
-## Security
-
-- **Authentication:** Manus OAuth 2.0 with JWT sessions
-- **Authorization:** Role-based access control (RBAC)
-- **Data Protection:** Encrypted database connections and secure file storage
-- **API Security:** tRPC type-safe procedures with authentication guards
-
-## Troubleshooting
-
-### Resume Parsing Issues
-- Ensure files are in supported formats (PDF, DOCX)
-- Check file size is under 10MB
-- Verify file is not corrupted
-
-### Database Connection Issues
-- Verify DATABASE_URL is correct
-- Check MySQL/TiDB server is running
-- Ensure SSL certificates are valid if required
-
-### LLM Integration Issues
-- Verify API keys are correct
-- Check API endpoint URLs
-- Review LLM service status
-
-## Contributing
-
-To contribute to TalentAI:
-
-1. Create a feature branch
-2. Make your changes
-3. Write tests for new functionality
-4. Submit a pull request
-
-## Support
-
-For issues, questions, or feature requests, please contact the TalentAI development team or visit the project documentation.
-
-## License
-
-MIT License - See LICENSE file for details
-
-## Acknowledgments
-
-- Built with React 19, Express 4, and tRPC 11
-- Database powered by Drizzle ORM
-- UI components from shadcn/ui
-- Charts powered by Recharts
-- Styling with Tailwind CSS 4
-- AI integration with Claude/GPT LLMs
+<div align="center">
+  <h1>Talent AI</h1>
+  <p><strong>Explainable AI Hiring Intelligence</strong></p>
+  <p>Structured candidate evaluation with transparent, job-relevant recommendations.</p>
+  <p>
+    <img src="https://img.shields.io/badge/Frontend-React%2019-149ECA" alt="React 19" />
+    <img src="https://img.shields.io/badge/Backend-Node.js%20%2B%20TypeScript-3178C6" alt="Node and TypeScript" />
+    <img src="https://img.shields.io/badge/Database-MySQL-4479A1" alt="MySQL" />
+  </p>
+</div>
 
 ---
 
-**TalentAI** - Intelligent Recruitment Made Simple
+## Overview
+
+Talent AI is a recruitment intelligence platform that helps recruiters organise job openings, review candidate profiles and compare applicants against role requirements. It combines structured candidate data, configurable scoring signals and LLM-assisted analysis to produce recommendations that are easier to inspect than a single unexplained match score.
+
+The goal is to support recruiter judgement—not replace it. A recommendation should help a recruiter understand relevant strengths, missing requirements and potential concerns, while leaving the final hiring decision with a human reviewer.
+
+## Key capabilities
+
+- Job creation and management
+- Candidate profile and resume information management
+- Candidate search, filtering and ranking
+- Job-to-candidate matching with a weighted scoring model
+- Matched and missing skill summaries
+- Explainable recommendation notes and risk signals
+- Recruiter dashboard and hiring analytics
+- Excel export for downstream review
+- LLM-assisted job requirement extraction using structured output and fallback handling
+- A structured, LLM-free ranking path for deterministic candidate scoring
+
+## How it works
+
+```mermaid
+flowchart TD
+    A[Recruiter creates a job] --> B[Extract role requirements]
+    C[Candidate profile and resume data] --> D[Normalize candidate attributes]
+    B --> E[Matching and scoring engine]
+    D --> E
+    E --> F[Ranked candidate list]
+    F --> G[Matched and missing skills]
+    F --> H[Explainability and risk signals]
+    G --> I[Recruiter review]
+    H --> I
+    I --> J[Human hiring decision]
+```
+
+## Scoring approach
+
+The documented weighted model combines six dimensions:
+
+| Dimension | Weight |
+|---|---:|
+| Skills | 40% |
+| Experience | 25% |
+| Projects | 15% |
+| Education | 10% |
+| Certifications | 5% |
+| Activity | 5% |
+
+The score is intended as a structured comparison aid. It is not a validated psychometric measure, a guarantee of job performance, or an automated hiring decision. Recruiters should review the underlying evidence and apply consistent, job-related criteria.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A[React 19 + TypeScript UI] --> B[tRPC API layer]
+    B --> C[Node.js / Express services]
+    C --> D[Candidate ranking and AI analysis]
+    C --> E[(MySQL via Drizzle ORM)]
+    D --> E
+    D --> F[Explainable match results]
+    F --> A
+```
+
+## Technology stack
+
+- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS, shadcn/ui
+- **Backend:** Node.js, Express, TypeScript, tRPC
+- **Database:** MySQL, Drizzle ORM
+- **AI integration:** OpenAI-compatible LLM API, structured JSON extraction and fallback logic
+- **Product features:** candidate ranking, job management, analytics and spreadsheet export
+
+## Getting started
+
+The application is located in the `talent-ai project/` directory. It uses pnpm (declared by the package metadata), MySQL and environment-based service configuration. Review [`talent-ai project/PROJECT_DOCUMENTATION.md`](talent-ai%20project/PROJECT_DOCUMENTATION.md) and `server/_core/env.ts` for the exact configuration required by your checkout.
+
+```bash
+cd "talent-ai project"
+pnpm install
+
+# Configure the required MySQL and LLM settings in your local environment
+# using the variable names defined in server/_core/env.ts.
+
+pnpm run db:push
+pnpm run dev
+```
+
+Other available scripts include `pnpm run check`, `pnpm test`, and `pnpm run build`. Do not commit API keys, database passwords or personal candidate data.
+
+## Responsible use
+
+Recruitment is a high-impact domain. Talent AI should be used as decision support only:
+
+- Keep a human recruiter responsible for every hiring decision.
+- Review source evidence rather than relying only on a generated explanation or score.
+- Apply consistent, role-related criteria to every applicant.
+- Do not use protected characteristics or proxies for them in scoring.
+- Validate ranking behaviour with representative, consented and appropriately governed data before any real hiring use.
+- Protect resumes and candidate information with appropriate access controls, retention rules and security review.
+- Monitor for disparate impact and investigate unexpected ranking patterns.
+
+The current project should be treated as a development/demo platform unless and until deployment, privacy, security, fairness and operational controls are independently validated.
+
+## Repository documentation
+
+For implementation details, database schema, API procedures, user roles, scoring calculations, security notes and development workflow, see [`talent-ai project/PROJECT_DOCUMENTATION.md`](talent-ai%20project/PROJECT_DOCUMENTATION.md).
+
+## Future directions
+
+- More rigorous evaluation of ranking quality and calibration
+- Bias and disparate-impact testing with documented governance
+- Candidate consent, retention and deletion workflows
+- Interview scheduling and recruiter collaboration
+- Integrations with approved HR systems
+- Expanded analytics and auditability
+
+---
+
+<div align="center"><strong>Talent AI — Make hiring decisions more informed, transparent and human-led.</strong></div>
